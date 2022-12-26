@@ -1,0 +1,213 @@
+SQL> desc stud;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ STUD_ID                                   NOT NULL NUMBER(3)
+ FNAME                                              CHAR(4)
+ LASTNAME                                           CHAR(4)
+ AGE                                                NUMBER(3)
+
+SQL> select* from stud;
+
+no rows selected
+
+SQL> insert into stud values(1,'A','B',10);
+
+1 row created.
+
+SQL> insert into stud values(2,'E','F',15);
+
+1 row created.
+
+SQL> delete from stud where age=15;
+
+1 row deleted.
+
+SQL> insert into stud values(2,'C','D',15);
+
+1 row created.
+
+SQL> insert into stud values(3,'E','F',20);
+
+1 row created.
+
+SQL> insert into stud values(4,'G','H',17);
+
+1 row created.
+
+SQL> insert into stud values(5,'I','J',18);
+
+1 row created.
+
+SQL> insert into stud values(6,'K','L',19);
+
+1 row created.
+
+SQL> select * from stud;
+
+   STUD_ID FNAM LAST        AGE
+---------- ---- ---- ----------
+         1 A    B            10
+         2 C    D            15
+         3 E    F            20
+         4 G    H            17
+         5 I    J            18
+         6 K    L            19
+
+6 rows selected.
+
+SQL> alter table dept add(stud_id number(3));
+
+Table altered.
+
+SQL> desc dept;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DEPTNAME                                           CHAR(7)
+ STUD_ID                                            NUMBER(3)
+
+SQL> alter table dept add(constraint fkd foreign key(stud_id) references stud(stud_id));
+
+Table altered.
+
+SQL> desc  dept;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DEPTNAME                                           CHAR(7)
+ STUD_ID                                            NUMBER(3)
+SQL> insert into dept values('CS',1);
+
+1 row created.
+
+SQL> insert into dept values('MATHS',2);
+
+1 row created.
+
+SQL> insert into dept values('MATHS',3);
+
+1 row created.
+
+SQL> insert into dept values('CIVIL',4);
+
+1 row created.
+
+SQL> insert into dept values('CIVIL',5);
+
+1 row created.
+
+SQL> insert into dept values('CS',6);
+
+1 row created.
+
+SQL> select * from dept;
+
+DEPTNAM    STUD_ID
+------- ----------
+CS               1
+MATHS            2
+MATHS            3
+CIVIL            4
+CIVIL            5
+CS               6
+
+6 rows selected.
+SQL> create table contact(stud_id number(3),
+  2
+SQL> create table contact(stud_id number(3), mobno number(11),emailid varchar2(15));
+
+Table created.
+
+SQL> alter table contact modify( emailid varchar2(25));
+
+Table altered.
+
+SQL> desc contact;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ STUD_ID                                            NUMBER(3)
+ MOBNO                                              NUMBER(11)
+ EMAILID                                            VARCHAR2(25)
+SQL> insert into contact values(1,5678904322,'abc@gmail.com');
+
+1 row created.
+
+SQL> insert into contact values(2,8939217950,'shine@gmail.com');
+
+1 row created.
+
+SQL> insert into contact values(3,7939217923,'anand@gmail.com');
+
+1 row created.
+
+SQL> insert into contact values(4,6539207923,'raj@gmail.com');
+
+1 row created.
+
+SQL> insert into contact values(5,9039207998,'muthu@gmail.com');
+
+1 row created.
+
+SQL> insert into contact values(6,8039207918,'sanjay@gmail.com');
+
+1 row created.
+
+SQL> select * from contact ;
+
+   STUD_ID      MOBNO EMAILID
+---------- ---------- -------------------------
+         1 5678904322 abc@gmail.com
+         2 8939217950 shine@gmail.com
+         3 7939217923 anand@gmail.com
+         4 6539207923 raj@gmail.com
+         5 9039207998 muthu@gmail.com
+         6 8039207918 sanjay@gmail.com
+
+6 rows selected.
+SQL> create view vjoin as select s.stud_id,s.fname,d.deptname,c.emailid from stud s inner join dept d on s.stud_id=d.stud_id inner join contact c on c.stud_id =s.stud_id;
+
+View created.
+
+SQL> desc vjoin;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ STUD_ID                                   NOT NULL NUMBER(3)
+ FNAME                                              CHAR(4)
+ DEPTNAME                                           CHAR(7)
+ EMAILID                                            VARCHAR2(25)
+
+
+SQL> select * from vjoin;
+
+        STUD_ID      FNAM  DEPTNAM      EMAILID
+        ---         ------- ---- ------- -------------------------
+         1             A    CS      abc@gmail.com
+         2             C    MATHS   shine@gmail.com
+         3             E    MATHS   anand@gmail.com
+         4             G    CIVIL   raj@gmail.com
+         5             I    CIVIL   muthu@gmail.com
+         6             K    CS      sanjay@gmail.com
+
+6 rows selected.
+SQL> insert into vjoin values (7,'S','biology','veera@gmail.com');
+insert into vjoin values (7,'S','biology','veera@gmail.com')
+*
+ERROR at line 1:
+ORA-01779: cannot modify a column which maps to a non key-preserved table
+SQL> select stud_id, emailid from vjoin where deptname in (select deptname from  vjoin  where fname ='A' and fname!='I');
+
+   STUD_ID EMAILID
+---------- -------------------------
+         1 abc@gmail.com
+         6 sanjay@gmail.com
+
+SQL> select stud_id, emailid from vjoin where deptname in (select deptname from  vjoin  where fname ='A' OR fname!='I');
+
+   STUD_ID EMAILID
+---------- -------------------------
+         6 sanjay@gmail.com
+         1 abc@gmail.com
+         3 anand@gmail.com
+         2 shine@gmail.com
+         5 muthu@gmail.com
+         4 raj@gmail.com
+
+6 rows selected.
