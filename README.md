@@ -1,0 +1,2 @@
+# sqlcode
+basic about sql
