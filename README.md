@@ -1,2 +1,2 @@
 # sqlcode
-basic about sql
+basics of  sql
